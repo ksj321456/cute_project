@@ -17,6 +17,7 @@ import kr.ac.hansung.cse.board_and_chatting.exception.exceptions.SignUpForExcept
 import kr.ac.hansung.cse.board_and_chatting.exception.exceptions.ValidationException;
 import kr.ac.hansung.cse.board_and_chatting.exception.status.ErrorStatus;
 import kr.ac.hansung.cse.board_and_chatting.exception.status.SuccessStatus;
+import kr.ac.hansung.cse.board_and_chatting.service.authentication_service.SessionService;
 import kr.ac.hansung.cse.board_and_chatting.service.user_service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +34,12 @@ import java.io.IOException;
 public class UserController implements UserSpecification {
 
     private UserService userService;
+    private SessionService sessionService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, SessionService sessionService) {
         this.userService = userService;
+        this.sessionService = sessionService;
     }
 
     public ResponseEntity<APIResponse<UserResponseDto.SignUpResponseDto>> signUp(@Valid @ModelAttribute UserRequestDto userDto, BindingResult bindingResult, HttpServletRequest request) throws IOException {
@@ -53,8 +56,7 @@ public class UserController implements UserSpecification {
             throw new SignUpForException(ErrorStatus.INTERNAL_BAD_REQUEST);
         }
 
-        HttpSession session = request.getSession();
-        session.setAttribute("user", user);
+        sessionService.setSession(request, user);
 
         UserResponseDto.SignUpResponseDto signUpResponseDto = UserResponseDto.SignUpResponseDto.builder()
                 .userId(user.getUserId())
@@ -83,8 +85,10 @@ public class UserController implements UserSpecification {
         User user = userService.loginService(loginDto);
 
         // 세션 새로 생성
-        HttpSession session = request.getSession(true);  // 없으면 새로 만듦
-        session.setAttribute("user", user);
+//        HttpSession session = request.getSession(true);  // 없으면 새로 만듦
+//        session.setAttribute("user", user);
+        HttpSession session = sessionService.getSession(request);
+        if (session == null) sessionService.setSession(request, user);
 
         UserResponseDto.LoginResponseDto logInResponseDto = UserResponseDto.LoginResponseDto.builder()
                 .userId(user.getUserId())
