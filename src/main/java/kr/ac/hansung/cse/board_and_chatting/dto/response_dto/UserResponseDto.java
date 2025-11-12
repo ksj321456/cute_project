@@ -21,4 +21,13 @@ public class UserResponseDto {
 
         private String nickname;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class LoginResponseDto implements UserResponse {
+        private String userId;
+
+        private String password;
+    }
 }

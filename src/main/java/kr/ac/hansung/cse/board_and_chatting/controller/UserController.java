@@ -1,8 +1,12 @@
 package kr.ac.hansung.cse.board_and_chatting.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import kr.ac.hansung.cse.board_and_chatting.controller.specification.UserSpecification;
 import kr.ac.hansung.cse.board_and_chatting.dto.request_dto.UserRequestDto;
 import kr.ac.hansung.cse.board_and_chatting.dto.request_dto.UserRequestDto;
 import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.UserResponse;
@@ -16,6 +20,7 @@ import kr.ac.hansung.cse.board_and_chatting.exception.status.SuccessStatus;
 import kr.ac.hansung.cse.board_and_chatting.service.user_service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +30,7 @@ import java.io.IOException;
 @RestController
 @Slf4j
 @RequestMapping("/api")
-public class UserController {
+public class UserController implements UserSpecification {
 
     private UserService userService;
 
@@ -34,7 +39,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/signup")
     public ResponseEntity<?> signUp(@Valid @ModelAttribute UserRequestDto userDto, BindingResult bindingResult, HttpServletRequest request) throws IOException {
         log.info(userDto.toString());
 
@@ -69,7 +73,6 @@ public class UserController {
 
     }
 
-    @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UserRequestDto.LoginDto loginDto, BindingResult bindingResult, HttpServletRequest request) {
         log.info(loginDto.toString());
         if (bindingResult.hasErrors()) {
@@ -83,12 +86,17 @@ public class UserController {
         HttpSession session = request.getSession(true);  // 없으면 새로 만듦
         session.setAttribute("user", user);
 
+        UserResponse logInResponseDto = UserResponseDto.LoginResponseDto.builder()
+                .userId(user.getUserId())
+                .password(user.getPassword())
+                .build();
+
         return APIResponse.toResponseEntity(
                 APIResponse.builder()
                         .status(SuccessStatus.LOG_IN_SUCCESS.getStatus())
                         .code(SuccessStatus.LOG_IN_SUCCESS.getCode())
                         .message(SuccessStatus.LOG_IN_SUCCESS.getMessage())
-                        .result(loginDto.getUserId())
+                        .result(logInResponseDto)
                         .build()
         );
     }
