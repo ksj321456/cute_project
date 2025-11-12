@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import kr.ac.hansung.cse.board_and_chatting.dto.request_dto.UserRequestDto;
 import kr.ac.hansung.cse.board_and_chatting.dto.request_dto.UserRequestDto;
+import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.UserResponse;
+import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.UserResponseDto;
 import kr.ac.hansung.cse.board_and_chatting.entity.User;
 import kr.ac.hansung.cse.board_and_chatting.exception.APIResponse;
 import kr.ac.hansung.cse.board_and_chatting.exception.exceptions.SignUpForException;
@@ -16,10 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @Slf4j
@@ -33,8 +34,8 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/sign-up")
-    public ResponseEntity<?> signUp(@Valid @RequestBody UserRequestDto userDto, BindingResult bindingResult, HttpServletRequest request) {
+    @PostMapping("/signup")
+    public ResponseEntity<?> signUp(@Valid @ModelAttribute UserRequestDto userDto, BindingResult bindingResult, HttpServletRequest request) throws IOException {
         log.info(userDto.toString());
 
         // 유효성 검사 실패 후 예외 처리
@@ -51,12 +52,18 @@ public class UserController {
         HttpSession session = request.getSession();
         session.setAttribute("user", user);
 
+        UserResponse signUpResponseDto = UserResponseDto.SignUpResponseDto.builder()
+                .userId(user.getUserId())
+                .password(user.getPassword())
+                .nickname(user.getNickname())
+                .build();
+
         return APIResponse.toResponseEntity(
                 APIResponse.builder()
                         .status(SuccessStatus.SIGN_UP_SUCCESS.getStatus())
                         .code(SuccessStatus.SIGN_UP_SUCCESS.getCode())
                         .message(SuccessStatus.SIGN_UP_SUCCESS.getMessage())
-                        .result(userDto)
+                        .result(signUpResponseDto)
                         .build()
         );
 

@@ -19,6 +19,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -97,6 +101,63 @@ public class CreateArticleTest {
                         .content(jsonRequest)
                         .sessionAttr("user", getFakeUser()))  // 세션에 유저도 넣어줌
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void runAsync() throws InterruptedException, ExecutionException {
+        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+            System.out.println("Thread: " + Thread.currentThread().getName());
+        });
+
+        future.get();
+        System.out.println("Thread: " + Thread.currentThread().getName());
+    }
+
+    @Test
+    void supplyAsync() throws InterruptedException, ExecutionException {
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+            return "Thread: " + Thread.currentThread().getName();
+        });
+
+        System.out.println(future.get());
+        System.out.println("Thread: " + Thread.currentThread().getName());
+    }
+
+    @Test
+    void thenApply() throws InterruptedException, ExecutionException {
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+            return "Thread: " + Thread.currentThread().getName();
+        }).thenApply(s -> s.toUpperCase());
+        System.out.println(future.get());
+    }
+
+    @Test
+    void thenAccept() throws InterruptedException, ExecutionException {
+        CompletableFuture<Void> future = CompletableFuture.supplyAsync(() -> {
+            return "Thread: " + Thread.currentThread().getName();
+        }).thenAccept(s -> System.out.println(s.toUpperCase()));
+
+        future.get();
+    }
+
+    @Test
+    void allOf() throws ExecutionException, InterruptedException {
+        CompletableFuture<String> hello = CompletableFuture.supplyAsync(() -> {
+            return "Hello";
+        });
+
+        CompletableFuture<String> mangKyu = CompletableFuture.supplyAsync(() -> {
+            return "MangKyu";
+        });
+
+        List<CompletableFuture<String>> futures = List.of(hello, mangKyu);
+
+        CompletableFuture<List<String>> result = CompletableFuture.allOf(hello, mangKyu)
+                .thenApply(v -> futures.stream().
+                        map(CompletableFuture::join).
+                        collect(Collectors.toList()));
+
+        result.get().forEach(System.out::println);
     }
 
     private User getFakeUser() {

@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -30,12 +31,17 @@ public class UserServiceImpl implements UserService {
 
     // 회원가입 진행 서비스 메소드
     @Transactional
-    public User signUpService(UserRequestDto userDto) {
+    public User signUpService(UserRequestDto userDto) throws IOException {
         Optional<User> userOptional = userRepository.findByUserId(userDto.getUserId());
 
         // 이미 존재하는 회원일 경우 예외처리
         if (userOptional.isPresent()) {
             throw new SignUpForException(ErrorStatus.ALREADY_EXISTS_USER);
+        }
+
+        byte[] pictureBytes = null;
+        if (userDto.getUserPicture() != null && !userDto.getUserPicture().isEmpty()) {
+            pictureBytes = userDto.getUserPicture().getBytes();
         }
 
         if (userDto.getUserId().equals("ADMIN")) {
@@ -44,7 +50,7 @@ public class UserServiceImpl implements UserService {
                     .userId(userDto.getUserId())
                     .password(bCryptPasswordEncoder.encode(userDto.getPassword()))
                     .authority(Authority.ADMIN)
-                    .userPicture(userDto.getUserPicture())
+                    .userPicture(pictureBytes)
                     .build();
             userRepository.save(user);
             return user;
@@ -54,7 +60,7 @@ public class UserServiceImpl implements UserService {
                     .userId(userDto.getUserId())
                     .password(bCryptPasswordEncoder.encode(userDto.getPassword()))
                     .authority(Authority.USER)
-                    .userPicture(userDto.getUserPicture())
+                    .userPicture(pictureBytes)
                     .build();
             userRepository.save(user);
             return user;
