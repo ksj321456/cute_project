@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @Builder
-public class UserResponseDto {
+public class UserResponseDto implements UserResponse {
 
 
     @Getter

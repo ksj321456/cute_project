@@ -27,12 +27,6 @@ public class APIResponse<T> {
     // 클라이언트에 넘겨줄 ResponseEntity 객체 생성 메소드
     public static <T> ResponseEntity<APIResponse<T>> toResponseEntity(APIResponse<T> apiResponse) {
         return ResponseEntity.status(apiResponse.getStatus())
-                .body(APIResponse.<T>builder()
-                        .status(apiResponse.getStatus())
-                        .code(apiResponse.getCode())
-                        .message(apiResponse.getMessage())
-                        .result(apiResponse.getResult())
-                        .build()
-                );
+                .body(apiResponse);
     }
 }

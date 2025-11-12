@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 // HTTP body에 담을 객체
 // NULL인 JSON field는 생략, NULL이 아닌 field와 값들만 응답 JSON으로 전송
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ErrorResponse {
+public class ErrorResponse<T> {
 
     private final HttpStatus status;
 
@@ -22,12 +22,13 @@ public class ErrorResponse {
 
     private String message;
 
-    private Object result;
+    private T result;
 
-    public static ResponseEntity<ErrorResponse> toResponseEntity(ErrorStatus status) {
+    // 제네릭 적용: result가 없는 경우
+    public static <T> ResponseEntity<ErrorResponse<T>> toResponseEntity(ErrorStatus status) {
         return ResponseEntity
                 .status(status.getStatus())
-                .body(ErrorResponse.builder()
+                .body(ErrorResponse.<T>builder()
                         .status(status.getStatus())
                         .code(status.getCode())
                         .message(status.getMessage())
@@ -35,10 +36,11 @@ public class ErrorResponse {
                 );
     }
 
-    public static ResponseEntity<ErrorResponse> toResponseEntity(ErrorStatus status, Object result) {
+    // 제네릭 적용: result가 있는 경우
+    public static <T> ResponseEntity<ErrorResponse<T>> toResponseEntity(ErrorStatus status, T result) {
         return ResponseEntity
                 .status(status.getStatus())
-                .body(ErrorResponse.builder()
+                .body(ErrorResponse.<T>builder()
                         .status(status.getStatus())
                         .code(status.getCode())
                         .message(status.getMessage())

@@ -20,15 +20,17 @@ import java.util.Map;
 public class GlobalExceptionAdvisor<T> {
 
     @ExceptionHandler(GeneralException.class)
-    public ResponseEntity<ErrorResponse> handleSignUpForException(GeneralException e) {
+    public <T> ResponseEntity<ErrorResponse<T>> handleGeneralException(GeneralException e) {
         log.error(String.valueOf(e.getStatus().getStatus()));
         log.error(e.getStatus().getCode());
         log.error(e.getStatus().getMessage());
-        return ErrorResponse.toResponseEntity(e.getStatus());
+
+        // result가 없는 경우
+        return ErrorResponse.<T>toResponseEntity(e.getStatus());
     }
 
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ErrorResponse> handleValidationException(ValidationException e) {
+    public ResponseEntity<ErrorResponse<List<Map<String, String>>>> handleValidationException(ValidationException e) {
 
         List<Map<String, String>> errorList = e.getBindingResult()
                 .getFieldErrors()
@@ -44,11 +46,10 @@ public class GlobalExceptionAdvisor<T> {
         log.error(e.getErrorStatus().getMessage());
 
         return ErrorResponse.toResponseEntity(e.getErrorStatus(), errorList);
-
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(AuthenticationException e) {
+    public <T> ResponseEntity<ErrorResponse<T>> handleDataIntegrityViolationException(AuthenticationException e) {
         log.error(String.valueOf(e.getErrorStatus().getStatus()));
         log.error(e.getErrorStatus().getCode());
         log.error(e.getErrorStatus().getMessage());

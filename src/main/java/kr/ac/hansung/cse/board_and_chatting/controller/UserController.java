@@ -39,7 +39,7 @@ public class UserController implements UserSpecification {
         this.userService = userService;
     }
 
-    public ResponseEntity<?> signUp(@Valid @ModelAttribute UserRequestDto userDto, BindingResult bindingResult, HttpServletRequest request) throws IOException {
+    public ResponseEntity<APIResponse<UserResponseDto.SignUpResponseDto>> signUp(@Valid @ModelAttribute UserRequestDto userDto, BindingResult bindingResult, HttpServletRequest request) throws IOException {
         log.info(userDto.toString());
 
         // 유효성 검사 실패 후 예외 처리
@@ -56,14 +56,14 @@ public class UserController implements UserSpecification {
         HttpSession session = request.getSession();
         session.setAttribute("user", user);
 
-        UserResponse signUpResponseDto = UserResponseDto.SignUpResponseDto.builder()
+        UserResponseDto.SignUpResponseDto signUpResponseDto = UserResponseDto.SignUpResponseDto.builder()
                 .userId(user.getUserId())
                 .password(user.getPassword())
                 .nickname(user.getNickname())
                 .build();
 
         return APIResponse.toResponseEntity(
-                APIResponse.builder()
+                APIResponse.<UserResponseDto.SignUpResponseDto>builder()
                         .status(SuccessStatus.SIGN_UP_SUCCESS.getStatus())
                         .code(SuccessStatus.SIGN_UP_SUCCESS.getCode())
                         .message(SuccessStatus.SIGN_UP_SUCCESS.getMessage())
@@ -73,7 +73,7 @@ public class UserController implements UserSpecification {
 
     }
 
-    public ResponseEntity<?> login(@Valid @RequestBody UserRequestDto.LoginDto loginDto, BindingResult bindingResult, HttpServletRequest request) {
+    public ResponseEntity<APIResponse<UserResponseDto.LoginResponseDto>> login(@Valid @RequestBody UserRequestDto.LoginDto loginDto, BindingResult bindingResult, HttpServletRequest request) {
         log.info(loginDto.toString());
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult, ErrorStatus.NOT_SUFFICIENT_DATA_FOR_LOG_IN);
@@ -86,13 +86,13 @@ public class UserController implements UserSpecification {
         HttpSession session = request.getSession(true);  // 없으면 새로 만듦
         session.setAttribute("user", user);
 
-        UserResponse logInResponseDto = UserResponseDto.LoginResponseDto.builder()
+        UserResponseDto.LoginResponseDto logInResponseDto = UserResponseDto.LoginResponseDto.builder()
                 .userId(user.getUserId())
                 .password(user.getPassword())
                 .build();
 
         return APIResponse.toResponseEntity(
-                APIResponse.builder()
+                APIResponse.<UserResponseDto.LoginResponseDto>builder()
                         .status(SuccessStatus.LOG_IN_SUCCESS.getStatus())
                         .code(SuccessStatus.LOG_IN_SUCCESS.getCode())
                         .message(SuccessStatus.LOG_IN_SUCCESS.getMessage())

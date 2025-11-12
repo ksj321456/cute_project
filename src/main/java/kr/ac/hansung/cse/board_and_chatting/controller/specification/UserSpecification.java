@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import kr.ac.hansung.cse.board_and_chatting.dto.request_dto.UserRequestDto;
 import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.UserResponseDto;
+import kr.ac.hansung.cse.board_and_chatting.exception.APIResponse;
 import kr.ac.hansung.cse.board_and_chatting.exception.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,7 +36,7 @@ public interface UserSpecification {
                         @ApiResponse(responseCode = "500", description = "서버 내부 에러", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 }
     )
-    ResponseEntity<?> signUp(@Parameter(description = "회원가입 데이터")
+    ResponseEntity<APIResponse<UserResponseDto.SignUpResponseDto>> signUp(@Parameter(description = "회원가입 데이터")
             @Valid @ModelAttribute UserRequestDto userDto, BindingResult bindingResult, HttpServletRequest request) throws IOException;
 
     @PostMapping(path = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -46,5 +47,7 @@ public interface UserSpecification {
                         @ApiResponse(responseCode = "500", description = "서버 내부 에러", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 }
     )
-    ResponseEntity<?> login(@Valid @RequestBody UserRequestDto.LoginDto loginDto, BindingResult bindingResult, HttpServletRequest request);
+    ResponseEntity<APIResponse<UserResponseDto.LoginResponseDto>> login(@Valid @RequestBody UserRequestDto.LoginDto loginDto,
+                                                                        BindingResult bindingResult,
+                                                                        HttpServletRequest request);
 }
