@@ -3,7 +3,9 @@ package kr.ac.hansung.cse.board_and_chatting.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import kr.ac.hansung.cse.board_and_chatting.controller.specification.UserSpecification;
@@ -105,13 +107,15 @@ public class UserController implements UserSpecification {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletRequest request) {
-//        HttpSession session = sessionService.getSession(request);
-//        if (session != null) {
-//            session.invalidate(); // 세션 있으면 정상적으로 만료
-//        }
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
 
         sessionService.logOut(sessionService.getSession(request));
+
+        // 브라우저에 남아 있는 JSESSION 세션 쿠키 삭제
+        Cookie cookie = new Cookie("JSESSIONID", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
 
         return APIResponse.toResponseEntity(
                 APIResponse.builder()
