@@ -87,8 +87,7 @@ public class UserController implements UserSpecification {
         // 세션 새로 생성
 //        HttpSession session = request.getSession(true);  // 없으면 새로 만듦
 //        session.setAttribute("user", user);
-        HttpSession session = sessionService.getSession(request);
-        if (session == null) sessionService.setSession(request, user);
+        sessionService.setSession(request, user);
 
         UserResponseDto.LoginResponseDto logInResponseDto = UserResponseDto.LoginResponseDto.builder()
                 .userId(user.getUserId())
@@ -107,10 +106,12 @@ public class UserController implements UserSpecification {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate(); // 세션 있으면 정상적으로 만료
-        }
+//        HttpSession session = sessionService.getSession(request);
+//        if (session != null) {
+//            session.invalidate(); // 세션 있으면 정상적으로 만료
+//        }
+
+        sessionService.logOut(sessionService.getSession(request));
 
         return APIResponse.toResponseEntity(
                 APIResponse.builder()
@@ -119,5 +120,27 @@ public class UserController implements UserSpecification {
                         .message(SuccessStatus.LOG_OUT_SUCCESS.getMessage())
                         .build()
         );
+    }
+
+    @GetMapping("/home")
+    public ResponseEntity<?> home(HttpServletRequest request) {
+
+        if (sessionService.getSession(request) != null) {
+            return APIResponse.toResponseEntity(
+                    APIResponse.builder()
+                            .status(SuccessStatus.SESSION_TEST_SUCCESS.getStatus())
+                            .code(SuccessStatus.SESSION_TEST_SUCCESS.getCode())
+                            .message(SuccessStatus.SESSION_TEST_SUCCESS.getMessage())
+                            .build()
+            );
+        } else {
+            return APIResponse.toResponseEntity(
+                    APIResponse.builder()
+                            .status(SuccessStatus.NO_SESSION.getStatus())
+                            .code(SuccessStatus.NO_SESSION.getCode())
+                            .message(SuccessStatus.NO_SESSION.getMessage())
+                            .build()
+            );
+        }
     }
 }

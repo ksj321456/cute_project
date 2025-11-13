@@ -18,6 +18,12 @@ public enum SuccessStatus {
     // 로그아웃 성공 메세지
     LOG_OUT_SUCCESS(HttpStatus.OK, "LOG_OUT_SUCCESS", "로그아웃에 성공했습니다."),
 
+    // 홈페이지 요청 시 세션 검사 성공
+    SESSION_TEST_SUCCESS(HttpStatus.OK, "SESSION_TEST_SUCCESS", "세션이 존재합니다."),
+
+    // 홈페이지 요청 시 세션 없음
+    NO_SESSION(HttpStatus.UNAUTHORIZED, "NO_SESSION", "세션이 존재하지 않거나 만료됐습니다."),
+
     // 게시글 등록 성공 메시지
     CREATE_ARTICLE_SUCCESS(HttpStatus.CREATED, "CREATE_ARTICLE_SUCCESS", "게시판 글 작성에 성공했습니다."),
 
