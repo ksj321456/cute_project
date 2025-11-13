@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import kr.ac.hansung.cse.board_and_chatting.controller.specification.UserSpecification;
 import kr.ac.hansung.cse.board_and_chatting.dto.request_dto.UserRequestDto;
 import kr.ac.hansung.cse.board_and_chatting.dto.request_dto.UserRequestDto;
+import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.EmptyResponse;
 import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.UserResponse;
 import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.UserResponseDto;
 import kr.ac.hansung.cse.board_and_chatting.entity.User;
@@ -28,6 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.*;
 import java.io.IOException;
 
 @RestController
@@ -37,11 +39,13 @@ public class UserController implements UserSpecification {
 
     private UserService userService;
     private SessionService sessionService;
+    private EmptyResponse emptyResponse;
 
     @Autowired
-    public UserController(UserService userService, SessionService sessionService) {
+    public UserController(UserService userService, SessionService sessionService, EmptyResponse emptyResponse) {
         this.userService = userService;
         this.sessionService = sessionService;
+        this.emptyResponse = emptyResponse;
     }
 
     public ResponseEntity<APIResponse<UserResponseDto.SignUpResponseDto>> signUp(@Valid @ModelAttribute UserRequestDto userDto, BindingResult bindingResult, HttpServletRequest request) throws IOException {
@@ -106,8 +110,7 @@ public class UserController implements UserSpecification {
         );
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<APIResponse<EmptyResponse>> logout(HttpServletRequest request, HttpServletResponse response) {
 
         sessionService.logOut(sessionService.getSession(request));
 
@@ -118,31 +121,33 @@ public class UserController implements UserSpecification {
         response.addCookie(cookie);
 
         return APIResponse.toResponseEntity(
-                APIResponse.builder()
+                APIResponse.<EmptyResponse>builder()
                         .status(SuccessStatus.LOG_OUT_SUCCESS.getStatus())
                         .code(SuccessStatus.LOG_OUT_SUCCESS.getCode())
                         .message(SuccessStatus.LOG_OUT_SUCCESS.getMessage())
+                        .result(emptyResponse)
                         .build()
         );
     }
 
-    @GetMapping("/home")
-    public ResponseEntity<?> home(HttpServletRequest request) {
+    public ResponseEntity<APIResponse<EmptyResponse>> home(HttpServletRequest request) {
 
         if (sessionService.getSession(request) != null) {
             return APIResponse.toResponseEntity(
-                    APIResponse.builder()
+                    APIResponse.<EmptyResponse>builder()
                             .status(SuccessStatus.SESSION_TEST_SUCCESS.getStatus())
                             .code(SuccessStatus.SESSION_TEST_SUCCESS.getCode())
                             .message(SuccessStatus.SESSION_TEST_SUCCESS.getMessage())
+                            .result(emptyResponse)
                             .build()
             );
         } else {
             return APIResponse.toResponseEntity(
-                    APIResponse.builder()
+                    APIResponse.<EmptyResponse>builder()
                             .status(SuccessStatus.NO_SESSION.getStatus())
                             .code(SuccessStatus.NO_SESSION.getCode())
                             .message(SuccessStatus.NO_SESSION.getMessage())
+                            .result(emptyResponse)
                             .build()
             );
         }
