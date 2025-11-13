@@ -7,8 +7,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import kr.ac.hansung.cse.board_and_chatting.dto.request_dto.UserRequestDto;
+import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.EmptyResponse;
 import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.UserResponseDto;
 import kr.ac.hansung.cse.board_and_chatting.exception.APIResponse;
 import kr.ac.hansung.cse.board_and_chatting.exception.ErrorResponse;
@@ -16,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,4 +53,21 @@ public interface UserSpecification {
     ResponseEntity<APIResponse<UserResponseDto.LoginResponseDto>> login(@Valid @RequestBody UserRequestDto.LoginDto loginDto,
                                                                         BindingResult bindingResult,
                                                                         HttpServletRequest request);
+
+    @PostMapping(path = "/logout")
+    @Operation(summary = "로그아웃", description = "클라이언트로부터 JSESSIONID 세션 쿠키를 받아 해당 세션 무효화 진행(반환 DTO 없음)",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "로그아웃 성공", content = @Content(schema = @Schema(implementation = EmptyResponse.class))),
+        }
+    )
+    ResponseEntity<APIResponse<EmptyResponse>> logout(HttpServletRequest request, HttpServletResponse response);
+
+    @GetMapping(path = "/home")
+    @Operation(summary = "홈페이지에 접근 시, 세션 검사하여, 통과하면 게시글 화면으로 이동, 그렇지 않으면 알림 제공(반환 DTO 없음)",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "세션 검사 성공", content = @Content(schema = @Schema(implementation = EmptyResponse.class))),
+                @ApiResponse(responseCode = "401", description = "세션 검사 실패", content = @Content(schema = @Schema(implementation = EmptyResponse.class))),
+        }
+    )
+    ResponseEntity<APIResponse<EmptyResponse>> home(HttpServletRequest request);
 }
