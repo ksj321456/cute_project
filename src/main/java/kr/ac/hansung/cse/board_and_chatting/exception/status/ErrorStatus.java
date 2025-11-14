@@ -25,8 +25,10 @@ public enum ErrorStatus {
     NOT_EXISTING_USER(HttpStatus.BAD_REQUEST, "LOGIN_4005", "해당 계정은 존재하지 않습니다."),
 
     // 게시판 예외
-    NOT_SUFFICIENT_DATA_FOR_CREATING_ARITLCE(HttpStatus.BAD_REQUEST, "BOARD_4001", "게시판 작성을 위한 필수 정보가 빠져 있습니다."),
-    ALREADY_EXISTS_ARTICLE(HttpStatus.BAD_REQUEST, "BOARD_4002", "같은 제목의 게시글이 이미 있습니다.")
+    NO_PAGING_HEADER(HttpStatus.BAD_REQUEST, "Board_4000", "게시글들 불러오기 위한 Header에 페이징 관련 쿼리 파라미터가 없습니다."),
+    INADEQUATE_PAGING_HEADER_FORMAT(HttpStatus.BAD_REQUEST, "Board_4001", "Header 페이징 관련 쿼리 파라미터 포맷이 잘못되었습니다."),
+    NOT_SUFFICIENT_DATA_FOR_CREATING_ARITLCE(HttpStatus.BAD_REQUEST, "BOARD_4002", "게시판 작성을 위한 필수 정보가 빠져 있습니다."),
+    ALREADY_EXISTS_ARTICLE(HttpStatus.BAD_REQUEST, "BOARD_4003", "같은 제목의 게시글이 이미 있습니다.")
     ;
 
     private final HttpStatus status;
