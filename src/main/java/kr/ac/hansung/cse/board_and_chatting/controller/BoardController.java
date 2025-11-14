@@ -3,7 +3,9 @@ package kr.ac.hansung.cse.board_and_chatting.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import kr.ac.hansung.cse.board_and_chatting.controller.specification.BoardSpeicification;
 import kr.ac.hansung.cse.board_and_chatting.dto.request_dto.BoardRequestDto;
+import kr.ac.hansung.cse.board_and_chatting.dto.request_header_dto.RequestHeaderDto;
 import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.BoardResponseDto;
 import kr.ac.hansung.cse.board_and_chatting.entity.Board;
 import kr.ac.hansung.cse.board_and_chatting.entity.User;
@@ -28,7 +30,7 @@ import java.util.TreeSet;
 @RequestMapping("/api")
 @Slf4j
 @RequiredArgsConstructor
-public class BoardController {
+public class BoardController implements BoardSpeicification {
 
     private final BoardService boardService;
 
@@ -88,13 +90,10 @@ public class BoardController {
     }
 
     // 게시글 전체 불러오기
-    @GetMapping("/get-articles")
-    public ResponseEntity<?> getArticles(
-            // 쿼리 파라미터 -> DTO 변환 => 유효성 검사 가능
-            @Valid @ModelAttribute BoardRequestDto.GetArticleRequestParameters getArticleRequestParameters,
-            BindingResult bindingResult,
+    public ResponseEntity<APIResponse<BoardResponseDto.GeneralArticlesResponseDto>> getArticles(
+            @Valid RequestHeaderDto.PagingHeader pagingHeader,
             HttpServletRequest request
-            ) {
+    ) {
 
         HttpSession session = request.getSession();
         // 인증/인가 작업 예외 처리
@@ -102,14 +101,8 @@ public class BoardController {
             throw new AuthenticationException(ErrorStatus.NO_AUTHENTICATION);
         }
 
-        // 유효성 검사 예외 처리
-        if (bindingResult.hasErrors()) {
-            throw new ValidationException(bindingResult, ErrorStatus.MISSING_REQUIRED_PARAMETERS);
-        }
-
-        // 페이징 처리 시 사용할 파라미터
-        int page = getArticleRequestParameters.getPage();
-        int size = getArticleRequestParameters.getSize();
+        int page = pagingHeader.getPage();
+        int size = pagingHeader.getSize();
 
         // 응답 시 넘겨줄 객체 생성
         BoardResponseDto.GeneralArticlesResponseDto generalArticlesResponseDto = boardService.getArticle(page, size);
