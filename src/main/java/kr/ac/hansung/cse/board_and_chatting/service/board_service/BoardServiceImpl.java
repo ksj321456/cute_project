@@ -50,44 +50,33 @@ public class BoardServiceImpl implements BoardService {
 
     public BoardResponseDto.GeneralArticlesResponseDto getArticle(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<BoardDto> boards = boardRepository.findAllWithUser(pageable);
-
-        List<Long> boardIds = new ArrayList<>();
-        for (BoardDto board : boards.getContent()) {
-            boardIds.add(board.getBoardId());
-        }
-        List<CommentDto> commentCountWithOneArticleDtos = commentRepository.findCommentCountCustom(boardIds);
+        Page<BoardDto> boards = boardRepository.findAllWithUserAndCommentCount(pageable);
 
         long totalPages = boards.getTotalPages();
         List<BoardResponseDto.ArticleResponseDto> articles = new ArrayList<>();
-        List<BoardDto> boardList = boards.getContent();
 
-        for (int i = 0; i < boardList.size(); i++) {
-            BoardDto board = boardList.get(i);
-            CommentDto commentCountWithOneArticleDto = commentCountWithOneArticleDtos.get(i);
-
+        for (BoardDto board : boards.getContent()) {
             BoardResponseDto.ArticleResponseDto articleResponseDto = BoardResponseDto.ArticleResponseDto.builder()
                     .boardId(board.getBoardId())
                     .title(board.getTitle())
                     .author(board.getAuthor())
                     .category(board.getCategory())
-                    .commentCount(commentCountWithOneArticleDto.getCommentCount())
+                    .commentCount(board.getCommentCount())  // BoardDto에서 바로 사용
                     .like(board.getLike())
                     .dislike(board.getDislike())
                     .createdAt(board.getCreatedAt())
                     .updatedAt(board.getUpdatedAt())
                     .build();
+
             articles.add(articleResponseDto);
         }
 
-        BoardResponseDto.GeneralArticlesResponseDto generalArticlesResponseDto = BoardResponseDto.GeneralArticlesResponseDto
-                .builder()
+        return BoardResponseDto.GeneralArticlesResponseDto.builder()
                 .totalPages(totalPages)
                 .articles(articles)
                 .build();
-
-        return generalArticlesResponseDto;
     }
+
 
     @Override
     public BoardResponseDto.GeneralArticlesResponseDto getArticlesWithTitle(String title, int page, int size) {

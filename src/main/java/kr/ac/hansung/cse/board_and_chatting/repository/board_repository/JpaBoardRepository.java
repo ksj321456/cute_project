@@ -13,14 +13,32 @@ import java.util.Optional;
 public interface JpaBoardRepository extends JpaRepository<Board, Long> {
     Optional<Board> findBoardById(Long boardId);
 
-    @Query(value = "SELECT b.id AS boardId, b.title AS title, b.category AS category, u.nickname AS author, b.like AS like, " +
-            "b.dislike AS dislike, b.createdAt AS createdAt, b.updatedAt AS updatedAt " +
-            "FROM Board b " +
-            "INNER JOIN b.user u " +
-            "ORDER BY b.createdAt DESC",
-    countQuery = "SELECT COUNT(b) FROM Board b"
+    @Query(value = """
+SELECT 
+    b.id AS boardId,
+    b.title AS title,
+    b.content AS content,
+    b.category AS category,
+    u.nickname AS author,
+    COUNT(c.id) AS commentCount,
+    b.like AS like,
+    b.dislike AS dislike,
+    b.createdAt AS createdAt,
+    b.updatedAt AS updatedAt
+FROM Board b
+JOIN b.user u ON b.user.id = u.id
+LEFT JOIN b.comments c ON b.id = c.board.id
+GROUP BY b.id
+ORDER BY b.createdAt DESC
+""",
+            countQuery = """
+SELECT COUNT(b)
+FROM Board b
+JOIN b.user u
+"""
     )
-    Page<BoardDto> findAllWithUser(Pageable pageable);
+    Page<BoardDto> findAllWithUserAndCommentCount(Pageable pageable);
+
 
     @Query(value = "SELECT b.id AS boardId, b.title AS title, b.category AS category, u.nickname AS author, b.like AS like, " +
             "b.dislike AS dislike, b.createdAt AS createdAt, b.updatedAt AS updatedAt " +
