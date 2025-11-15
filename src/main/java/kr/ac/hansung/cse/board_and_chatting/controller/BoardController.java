@@ -59,10 +59,8 @@ public class BoardController implements BoardSpecification {
     }
 
     // 게시글 하나 보기
-    @GetMapping("/get_article/{id}")
     public ResponseEntity<?> getArticle(@PathVariable(value = "id") Long id,
-                                        @RequestParam("page") int commentPage,
-                                        @RequestParam("size") int commentSize,
+                                        @Valid RequestHeaderDto.PagingHeader pagingHeader,
                                         HttpServletRequest request
                                         ) {
         HttpSession session = request.getSession();
@@ -70,6 +68,9 @@ public class BoardController implements BoardSpecification {
         if (session.getAttribute("user") == null) {
             throw new AuthenticationException(ErrorStatus.NO_AUTHENTICATION);
         }
+
+        int commentPage = pagingHeader.getPage();
+        int commentSize = pagingHeader.getSize();
 
         User user = (User) session.getAttribute("user");
         BoardResponseDto.OneArticleResponseDto oneArticleResponseDto = boardService.getOneArticle(id, user, commentPage, commentSize);

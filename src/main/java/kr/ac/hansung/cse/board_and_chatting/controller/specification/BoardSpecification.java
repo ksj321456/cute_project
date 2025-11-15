@@ -48,4 +48,35 @@ public interface BoardSpecification {
             @Valid RequestHeaderDto.PagingHeader pagingHeader,
             HttpServletRequest request
     );
+
+    @Operation(summary = "선택한 게시글 보기", description = "선택한 게시글의 ID를 받아 해당 게시글의 내용 및 댓글들을 보여줍니다.",
+            parameters = {
+            @Parameter(
+                    name = "board_id",
+                    description = "게시글 ID",
+                    in = ParameterIn.PATH,
+                    required = true,
+                    example = "1"
+            ),
+                    @Parameter(
+                            name = "page",
+                            description = "페이지 번호(0부터 시작)",
+                            in = ParameterIn.QUERY,
+                            required = true,
+                            example = "0"
+                    ),
+                    @Parameter(
+                            name = "size",
+                            description = "각 페이지의 요소 크기",
+                            in = ParameterIn.QUERY,
+                            required = true,
+                            example = "20"
+                    )
+            }
+    )
+    @GetMapping("/get_article/{id}")
+    public ResponseEntity<?> getArticle(@PathVariable(value = "id") Long id,
+                                        @Valid RequestHeaderDto.PagingHeader pagingHeader,
+                                        HttpServletRequest request
+    );
 }
