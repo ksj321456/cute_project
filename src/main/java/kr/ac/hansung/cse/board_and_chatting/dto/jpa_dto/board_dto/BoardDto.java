@@ -11,6 +11,7 @@ public interface BoardDto {
     String getContent();
     Category getCategory();
     String getAuthor(); // user.nickname 대신 alias 사용 가능
+    Long getCommentCount();   // COUNT(c.id) AS commentCount
     Long getLike();
     Long getDislike();
     LocalDateTime getCreatedAt();

@@ -47,8 +47,8 @@ public class BoardJpaRepository implements BoardRepository {
 
     // DB에 저장되어 있는 모든 게시물 보여주기
     @Override
-    public Page<BoardDto> findAllWithUser(Pageable pageable) {
-        return boardRepository.findAllWithUser(pageable);
+    public Page<BoardDto> findAllWithUserAndCommentCount(Pageable pageable) {
+        return boardRepository.findAllWithUserAndCommentCount(pageable);
     }
 
     @Override

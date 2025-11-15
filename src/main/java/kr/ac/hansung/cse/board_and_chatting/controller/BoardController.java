@@ -3,13 +3,11 @@ package kr.ac.hansung.cse.board_and_chatting.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import kr.ac.hansung.cse.board_and_chatting.controller.specification.BoardSpeicification;
+import kr.ac.hansung.cse.board_and_chatting.controller.specification.BoardSpecification;
 import kr.ac.hansung.cse.board_and_chatting.dto.request_dto.BoardRequestDto;
 import kr.ac.hansung.cse.board_and_chatting.dto.request_header_dto.RequestHeaderDto;
 import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.BoardResponseDto;
-import kr.ac.hansung.cse.board_and_chatting.entity.Board;
 import kr.ac.hansung.cse.board_and_chatting.entity.User;
-import kr.ac.hansung.cse.board_and_chatting.entity.enums.Authority;
 import kr.ac.hansung.cse.board_and_chatting.exception.APIResponse;
 import kr.ac.hansung.cse.board_and_chatting.exception.exceptions.AuthenticationException;
 import kr.ac.hansung.cse.board_and_chatting.exception.exceptions.ValidationException;
@@ -18,19 +16,15 @@ import kr.ac.hansung.cse.board_and_chatting.exception.status.SuccessStatus;
 import kr.ac.hansung.cse.board_and_chatting.service.board_service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Set;
-import java.util.TreeSet;
 
 @RestController
 @RequestMapping("/api")
 @Slf4j
 @RequiredArgsConstructor
-public class BoardController implements BoardSpeicification {
+public class BoardController implements BoardSpecification {
 
     private final BoardService boardService;
 
@@ -65,7 +59,7 @@ public class BoardController implements BoardSpeicification {
     }
 
     // 게시글 하나 보기
-    @GetMapping("/get-article/{id}")
+    @GetMapping("/get_article/{id}")
     public ResponseEntity<?> getArticle(@PathVariable(value = "id") Long id,
                                         @RequestParam("page") int commentPage,
                                         @RequestParam("size") int commentSize,

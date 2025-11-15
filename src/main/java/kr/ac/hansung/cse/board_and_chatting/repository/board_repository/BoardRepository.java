@@ -10,7 +10,7 @@ public interface BoardRepository {
 
     Board findBoardById(Long boardId);
 
-    Page<BoardDto> findAllWithUser(Pageable pageable);
+    Page<BoardDto> findAllWithUserAndCommentCount(Pageable pageable);
 
     Page<BoardDto> findAllByTitleCustom(String title, Pageable pageable);
 
