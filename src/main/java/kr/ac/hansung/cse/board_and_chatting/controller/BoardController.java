@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import kr.ac.hansung.cse.board_and_chatting.controller.specification.BoardSpecification;
 import kr.ac.hansung.cse.board_and_chatting.dto.request_dto.BoardRequestDto;
-import kr.ac.hansung.cse.board_and_chatting.dto.request_header_dto.RequestHeaderDto;
+import kr.ac.hansung.cse.board_and_chatting.dto.request_parameter_dto.RequestHeaderDto;
 import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.BoardResponseDto;
 import kr.ac.hansung.cse.board_and_chatting.entity.User;
 import kr.ac.hansung.cse.board_and_chatting.exception.APIResponse;
