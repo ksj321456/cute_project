@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
+@Table(name = "comment"
+)
 public class Comment implements BaseEntity {
 
     @Id

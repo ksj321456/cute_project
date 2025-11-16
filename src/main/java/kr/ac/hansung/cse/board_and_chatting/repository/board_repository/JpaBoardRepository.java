@@ -60,6 +60,9 @@ JOIN b.user u
     Page<BoardDto> findAllByTitleAndContentCustom(@Param("title") String title, @Param("content") String content, Pageable pageable);
 
     // Fetch join으로 Board와 매핑되어 있는 User 객체도 함께 GET
-    @Query(value = "SELECT b FROM Board b JOIN FETCH b.user u WHERE b.id = :boardId")
+    @Query(value = "SELECT b " +
+            "FROM Board b " +
+            "JOIN FETCH b.user u " +
+            "WHERE b.id = :boardId")
     Optional<Board> findBoardByIdCustom(@Param("boardId") Long boardId);
 }
