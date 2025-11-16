@@ -1,6 +1,6 @@
 package kr.ac.hansung.cse.board_and_chatting.configuration.resolver;
 
-import kr.ac.hansung.cse.board_and_chatting.dto.request_parameter_dto.RequestHeaderDto;
+import kr.ac.hansung.cse.board_and_chatting.dto.request_parameter_dto.RequestParameterDtoImpl;
 import kr.ac.hansung.cse.board_and_chatting.dto.request_parameter_dto.RequestParameterDto;
 import kr.ac.hansung.cse.board_and_chatting.exception.exceptions.InadequatePagingHeaderFormat;
 import kr.ac.hansung.cse.board_and_chatting.exception.exceptions.NoPagingParameterException;
@@ -10,11 +10,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.NativeWebRequest;
 
 @Component
-public class PagingParameterState implements RequestParameterState {
+public class AllArticlesPagingState implements RequestParameterState {
 
     @Override
     public boolean supports(MethodParameter parameter) {
-        return parameter.getParameterType().equals(RequestHeaderDto.PagingHeader.class);
+        return parameter.getParameterType().equals(RequestParameterDtoImpl.PagingHeader.class);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class PagingParameterState implements RequestParameterState {
             throw new InadequatePagingHeaderFormat(ErrorStatus.INADEQUATE_PAGING_HEADER_FORMAT);
         }
 
-        RequestHeaderDto.PagingHeader dto = RequestHeaderDto.PagingHeader.builder()
+        RequestParameterDtoImpl.PagingHeader dto = RequestParameterDtoImpl.PagingHeader.builder()
                 .page(page)
                 .size(size)
                 .build();

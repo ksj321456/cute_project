@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import kr.ac.hansung.cse.board_and_chatting.controller.specification.BoardSpecification;
 import kr.ac.hansung.cse.board_and_chatting.dto.request_dto.BoardRequestDto;
-import kr.ac.hansung.cse.board_and_chatting.dto.request_parameter_dto.RequestHeaderDto;
+import kr.ac.hansung.cse.board_and_chatting.dto.request_parameter_dto.RequestParameterDtoImpl;
 import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.BoardResponseDto;
 import kr.ac.hansung.cse.board_and_chatting.entity.User;
 import kr.ac.hansung.cse.board_and_chatting.exception.APIResponse;
@@ -60,7 +60,7 @@ public class BoardController implements BoardSpecification {
 
     // 게시글 하나 보기
     public ResponseEntity<?> getArticle(@PathVariable(value = "id") Long id,
-                                        @Valid RequestHeaderDto.PagingHeader pagingHeader,
+                                        @Valid RequestParameterDtoImpl.PagingHeader pagingHeader,
                                         HttpServletRequest request
                                         ) {
         HttpSession session = request.getSession();
@@ -86,7 +86,7 @@ public class BoardController implements BoardSpecification {
 
     // 게시글 전체 불러오기
     public ResponseEntity<APIResponse<BoardResponseDto.GeneralArticlesResponseDto>> getArticles(
-            @Valid RequestHeaderDto.PagingHeader pagingHeader,
+            @Valid RequestParameterDtoImpl.PagingHeader pagingHeader,
             HttpServletRequest request
     ) {
 

@@ -3,9 +3,8 @@ package kr.ac.hansung.cse.board_and_chatting.dto.request_parameter_dto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.stereotype.Component;
 
-public class RequestHeaderDto {
+public class RequestParameterDtoImpl {
 
     @Getter
     @AllArgsConstructor
