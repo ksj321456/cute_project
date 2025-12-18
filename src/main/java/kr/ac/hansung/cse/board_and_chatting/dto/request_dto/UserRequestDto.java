@@ -44,4 +44,14 @@ public class UserRequestDto {
         private String password;
     }
 
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class FriendRequestDto {
+
+        @Schema(description = "친구 추가하고자 하는 닉네임", example = "ksj")
+        @NotBlank(message = "친구 요청 닉네임을 입력해주세요.")
+        private String nickname;
+    }
+
 }

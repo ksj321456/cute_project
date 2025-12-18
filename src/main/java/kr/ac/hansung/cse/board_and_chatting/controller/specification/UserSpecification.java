@@ -14,6 +14,7 @@ import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.EmptyResponse;
 import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.UserResponseDto;
 import kr.ac.hansung.cse.board_and_chatting.exception.APIResponse;
 import kr.ac.hansung.cse.board_and_chatting.exception.ErrorResponse;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -70,4 +71,9 @@ public interface UserSpecification {
         }
     )
     ResponseEntity<APIResponse<EmptyResponse>> home(HttpServletRequest request);
+
+
+    @PostMapping("/request_friend")
+    @Operation(summary = "친구 요청", description = "친구 요청 보내기 -> 이벤트로 던져줘서 이벤트 리스너(구독자)가 가로채서 대신 수행하는 형식")
+    ResponseEntity<APIResponse<EmptyResponse>> requestFriend(UserRequestDto.FriendRequestDto friendRequestDto, BindingResult bindingResult, HttpServletRequest request);
 }

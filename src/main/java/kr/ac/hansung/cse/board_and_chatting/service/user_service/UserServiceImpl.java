@@ -1,13 +1,19 @@
 package kr.ac.hansung.cse.board_and_chatting.service.user_service;
 
 import kr.ac.hansung.cse.board_and_chatting.dto.request_dto.UserRequestDto;
+import kr.ac.hansung.cse.board_and_chatting.entity.Friend;
 import kr.ac.hansung.cse.board_and_chatting.entity.User;
 import kr.ac.hansung.cse.board_and_chatting.entity.enums.Authority;
+import kr.ac.hansung.cse.board_and_chatting.event.FriendRequestEvent;
+import kr.ac.hansung.cse.board_and_chatting.exception.exceptions.GeneralException;
 import kr.ac.hansung.cse.board_and_chatting.exception.exceptions.LogInException;
 import kr.ac.hansung.cse.board_and_chatting.exception.exceptions.SignUpForException;
 import kr.ac.hansung.cse.board_and_chatting.exception.status.ErrorStatus;
+import kr.ac.hansung.cse.board_and_chatting.repository.friend_repository.JpaFriendRepository;
 import kr.ac.hansung.cse.board_and_chatting.repository.user_repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,16 +24,13 @@ import java.util.Optional;
 
 @Service
 @Primary
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.userRepository = userRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-    }
+    private final JpaFriendRepository friendRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     // 회원가입 진행 서비스 메소드
     @Transactional
@@ -82,5 +85,29 @@ public class UserServiceImpl implements UserService {
 
         // user 객체 반환
         return userOptional.get();
+    }
+
+    @Override
+    @Transactional
+    public void friendRequest(String from, String to) {
+
+        User fromUser = userRepository.findByNickname(from)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.NO_FRIEND_WITH_THE_NICKNAME));
+
+        User toUser = userRepository.findByNickname(to)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.NO_FRIEND_WITH_THE_NICKNAME));
+
+        if (from.equals(to)) throw new GeneralException(ErrorStatus.ENABLE_FRIEND_BY_MYSELF);
+
+        if (friendRepository.existsByRequesterAndReceiver(fromUser, toUser)) throw new GeneralException(ErrorStatus.ALREADY_FRIEND_REQUESTED);
+
+        if (friendRepository.existsByRequesterAndReceiver(fromUser, toUser) && friendRepository.existsByRequesterAndReceiver(toUser, fromUser))
+            throw new GeneralException(ErrorStatus.ALREADY_FRIEND);
+
+        Friend friend = Friend.create(fromUser, toUser);
+
+        friendRepository.save(friend);
+
+        applicationEventPublisher.publishEvent(new FriendRequestEvent(friend));
     }
 }

@@ -16,6 +16,8 @@ import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.UserResponse;
 import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.UserResponseDto;
 import kr.ac.hansung.cse.board_and_chatting.entity.User;
 import kr.ac.hansung.cse.board_and_chatting.exception.APIResponse;
+import kr.ac.hansung.cse.board_and_chatting.exception.exceptions.AuthenticationException;
+import kr.ac.hansung.cse.board_and_chatting.exception.exceptions.GeneralException;
 import kr.ac.hansung.cse.board_and_chatting.exception.exceptions.SignUpForException;
 import kr.ac.hansung.cse.board_and_chatting.exception.exceptions.ValidationException;
 import kr.ac.hansung.cse.board_and_chatting.exception.status.ErrorStatus;
@@ -151,5 +153,33 @@ public class UserController implements UserSpecification {
                             .build()
             );
         }
+    }
+
+
+    @Override
+    public ResponseEntity<APIResponse<EmptyResponse>> requestFriend(@Valid @RequestBody UserRequestDto.FriendRequestDto friendRequestDto,
+                                                                    BindingResult bindingResult,
+                                                                    HttpServletRequest request) {
+
+        if (sessionService.getSession(request) == null) throw new AuthenticationException(ErrorStatus.NO_AUTHENTICATION);
+
+        if (bindingResult.hasErrors()) throw new GeneralException(ErrorStatus.EMPTY_NICKNAME_FOR_FRIEND_REQUEST);
+
+        User user = (User) sessionService.getSession(request).getAttribute("user");
+
+        String from = user.getNickname();
+
+        String to = friendRequestDto.getNickname();
+
+        // 서비스 로직에 from, to 넘겨 주기
+        userService.friendRequest(from, to);
+
+        return APIResponse.toResponseEntity(
+                APIResponse.<EmptyResponse>builder()
+                        .status(SuccessStatus.FRIEND_REQUEST_SUCCESS.getStatus())
+                        .code(SuccessStatus.FRIEND_REQUEST_SUCCESS.getCode())
+                        .message(SuccessStatus.FRIEND_REQUEST_SUCCESS.getMessage())
+                        .build()
+        );
     }
 }

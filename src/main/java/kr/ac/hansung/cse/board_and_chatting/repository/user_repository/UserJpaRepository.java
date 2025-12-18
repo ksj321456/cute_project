@@ -28,4 +28,9 @@ public class UserJpaRepository implements UserRepository {
     public User save(User user) {
         return userRepository.save(user);
     }
+
+    @Override
+    public Optional<User> findByNickname(String nickname) {
+        return userRepository.findByNickname(nickname);
+    }
 }
