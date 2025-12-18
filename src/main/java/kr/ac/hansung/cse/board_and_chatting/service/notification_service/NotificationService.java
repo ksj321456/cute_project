@@ -19,4 +19,14 @@ public class NotificationService {
     public List<Notification> findByUserAndIsReadFalse(User user) {
         return notificationRepository.findByUserAndIsReadFalse(user);
     }
+
+    @Transactional
+    public List<Notification> findByUser(User user) {
+        return notificationRepository.findByUser(user);
+    }
+
+    @Transactional
+    public Notification save(Notification notification) {
+        return notificationRepository.save(notification);
+    }
 }

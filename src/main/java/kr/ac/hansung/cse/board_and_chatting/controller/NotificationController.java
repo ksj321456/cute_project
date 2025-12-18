@@ -43,14 +43,18 @@ public class NotificationController {
         } catch (IOException e) { /* ... */ }
 
         // 밀린 알림들 가져오기
-        List<Notification> unReadNotifications = notificationService.findByUserAndIsReadFalse(user);
-        System.out.println("알림 수: " + unReadNotifications.size());
+        List<Notification> unReadNotifications = notificationService.findByUser(user);
 
         unReadNotifications.forEach(notification -> {
             sseNotificationSender.send(userId, Map.of(
                     "type", notification.getType(),
-                    "content", notification.getContent()
+                    "content", notification.getContent(),
+                    "isRead", notification.isRead()
             ));
+            if (!notification.isRead()) {
+                notification.setRead(true);
+                notificationService.save(notification);
+            }
         });
         return sseEmitter;
     }

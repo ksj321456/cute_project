@@ -10,4 +10,6 @@ import java.util.List;
 public interface JpaNotificationRepository extends JpaRepository<Notification, Long> {
 
     List<Notification> findByUserAndIsReadFalse(User user);
+
+    List<Notification> findByUser(User user);
 }
