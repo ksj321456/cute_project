@@ -18,6 +18,9 @@ public enum SuccessStatus {
     // 로그아웃 성공 메세지
     LOG_OUT_SUCCESS(HttpStatus.OK, "LOG_OUT_SUCCESS", "로그아웃에 성공했습니다."),
 
+    // 친구 요청 성공 메시지
+    FRIEND_REQUEST_SUCCESS(HttpStatus.OK, "FRIEND_REQUEST_SUCCESS", "친구 요청에 성공했습니다."),
+
     // 홈페이지 요청 시 세션 검사 성공
     SESSION_TEST_SUCCESS(HttpStatus.OK, "SESSION_TEST_SUCCESS", "세션이 존재합니다."),
 

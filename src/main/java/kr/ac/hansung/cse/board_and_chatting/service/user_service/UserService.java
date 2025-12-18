@@ -11,4 +11,6 @@ public interface UserService {
     public User signUpService(UserRequestDto userDto) throws IOException;
 
     public User loginService(UserRequestDto.LoginDto userDto);
+
+    void friendRequest(String from, String to);
 }

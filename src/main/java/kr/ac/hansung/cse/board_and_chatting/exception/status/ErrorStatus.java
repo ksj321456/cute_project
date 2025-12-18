@@ -24,6 +24,13 @@ public enum ErrorStatus {
     WRONG_BOTH_INFO(HttpStatus.BAD_REQUEST, "LOGIN_4004", "아이디와 비밀번호 모두 틀렸습니다."),
     NOT_EXISTING_USER(HttpStatus.BAD_REQUEST, "LOGIN_4005", "해당 계정은 존재하지 않습니다."),
 
+    // 친구 요청 예외
+    EMPTY_NICKNAME_FOR_FRIEND_REQUEST(HttpStatus.BAD_REQUEST, "FRIEND_REQUEST_4001", "친구 요청 닉네임을 입력해주세요."),
+    NO_FRIEND_WITH_THE_NICKNAME(HttpStatus.BAD_REQUEST, "FRIEND_REQUEST_4002", "해당 닉네임의 유저는 없습니다."),
+    ENABLE_FRIEND_BY_MYSELF(HttpStatus.BAD_REQUEST, "FRIEND_REQUEST_4003", "자기 자신과 친구를 할 수 없습니다."),
+    ALREADY_FRIEND_REQUESTED(HttpStatus.BAD_REQUEST, "FRIEND_REQUEST_4004", "이미 친구 요청을 보낸 유저입니다."),
+    ALREADY_FRIEND(HttpStatus.BAD_REQUEST, "FRIEND_REQUEST_4005", "이미 친구 관계입니다."),
+
     // 게시판 예외
     NO_PAGING_HEADER(HttpStatus.BAD_REQUEST, "Board_4000", "게시글들 불러오기 위한 Header에 페이징 관련 쿼리 파라미터가 없습니다."),
     INADEQUATE_PAGING_HEADER_FORMAT(HttpStatus.BAD_REQUEST, "Board_4001", "Header 페이징 관련 쿼리 파라미터 포맷이 잘못되었습니다."),
