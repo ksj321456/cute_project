@@ -5,6 +5,7 @@ import kr.ac.hansung.cse.board_and_chatting.infrastructure.SseNotificationSender
 import kr.ac.hansung.cse.board_and_chatting.repository.friend_repository.JpaFriendRepository;
 import kr.ac.hansung.cse.board_and_chatting.repository.notification_repository.JpaNotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ public class FriendRequestEventListener {
     private final JpaNotificationRepository notificationRepository;
     private final SseNotificationSender sseNotificationSender;
 
+    @Async("notificationTaskExecutor")
     @Transactional(propagation = Propagation.REQUIRES_NEW) // 새로운 트랜잭션 생성
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleFriendRequestEvent(FriendRequestEvent friendRequestEvent) {
