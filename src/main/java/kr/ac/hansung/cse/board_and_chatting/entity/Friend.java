@@ -5,12 +5,14 @@ import kr.ac.hansung.cse.board_and_chatting.entity.enums.FriendStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Friend implements BaseEntity {

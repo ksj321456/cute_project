@@ -2,6 +2,7 @@ package kr.ac.hansung.cse.board_and_chatting.infrastructure;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import org.yaml.snakeyaml.emitter.Emitter;
 
 import java.io.IOException;
 import java.util.Map;
@@ -37,5 +38,10 @@ public class SseNotificationSender {
                 emitters.remove(toId);
             }
         }
+    }
+
+    // Emitter가 연결되어 있으면 객체 반환, 그렇지 않으면 null
+    public boolean isEmitterLogin(Long receiverId) {
+        return emitters.containsKey(receiverId);
     }
 }
