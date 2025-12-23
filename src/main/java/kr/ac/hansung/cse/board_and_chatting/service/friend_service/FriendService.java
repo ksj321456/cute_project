@@ -21,7 +21,7 @@ public class FriendService {
     private final JpaFriendRepository friendRepository;
     private final UserRepository userRepository;
 
-    // Receiver가 승락했을 때, Friend 테이블 status를 FRIEND로 변경하기
+    // Receiver가 승낙했을 때, Friend 테이블 status를 FRIEND로 변경하기
     // 매개변수인 receiver와 requesterNickname으로 Friend 테이블 검사 후, status를 FRIEND로 변경
     // 반환값은 친구 요청을 보낸 유저(Notification 객체 생성을 위해)
     // 동기로 쿼리 3번 ㅋㅋ

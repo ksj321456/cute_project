@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -60,10 +61,15 @@ public class NotificationController {
                     "isRead", notification.isRead()
             ));
 
-            // 해당 UPDATE 작업은 비동기 스레드로 하자~!
-            if (!notification.isRead()) {
-                notification.setRead(true);
-                notificationService.save(notification);
+            // 읽지 않은 알림들의 PK List
+            List<Long> unReadNotificationIds = unReadNotifications.stream()
+                    .filter(n -> !n.isRead())
+                    .map(n -> n.getId())
+                    .collect(Collectors.toList());
+
+            // 해당 알림들을 한꺼번에 '읽음'으로 UPDATE 처리
+            if (!unReadNotificationIds.isEmpty()) {
+                notificationService.markAsReadByIds(unReadNotificationIds);
             }
         });
         return sseEmitter;
@@ -98,10 +104,9 @@ public class NotificationController {
                     "isRead", notification.isRead()
             ));
 
-            // 해당 UPDATE 작업은 비동기 스레드로 하자~!
+            // isRead = true -> UPDATE 비동기로 처리
             if (!notification.isRead()) {
-                notification.setRead(true);
-                notificationService.save(notification);
+                notificationService.updateNotificationToRead(notification);
             }
         }
 

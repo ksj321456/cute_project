@@ -33,7 +33,6 @@ public class FriendRequestEventListener {
 
         sseNotificationSender.send(notification.getUser().getId(), Map.of(
                 "type", "friend-request",
-                "from", friendRequestEvent.getFriend().getRequester().getNickname(),
                 "content", notification.getContent(),
                 "isRead", notification.isRead()
         ));
