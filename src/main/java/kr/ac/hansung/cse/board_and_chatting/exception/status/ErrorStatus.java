@@ -30,6 +30,7 @@ public enum ErrorStatus {
     ENABLE_FRIEND_BY_MYSELF(HttpStatus.BAD_REQUEST, "FRIEND_REQUEST_4003", "자기 자신과 친구를 할 수 없습니다."),
     ALREADY_FRIEND_REQUESTED(HttpStatus.BAD_REQUEST, "FRIEND_REQUEST_4004", "이미 친구 요청을 보낸 유저입니다."),
     ALREADY_FRIEND(HttpStatus.BAD_REQUEST, "FRIEND_REQUEST_4005", "이미 친구 관계입니다."),
+    NO_FRIEND_RECORD(HttpStatus.BAD_REQUEST, "FRIEND_REQUEST_4006", "친구 요청 기록이 없습니다."),
 
     // 게시판 예외
     NO_PAGING_HEADER(HttpStatus.BAD_REQUEST, "Board_4000", "게시글들 불러오기 위한 Header에 페이징 관련 쿼리 파라미터가 없습니다."),

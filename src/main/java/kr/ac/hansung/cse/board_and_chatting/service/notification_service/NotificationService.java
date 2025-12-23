@@ -29,4 +29,16 @@ public class NotificationService {
     public Notification save(Notification notification) {
         return notificationRepository.save(notification);
     }
+
+    // 매개변수 receiver는 해당 알림을 받을 유저 즉, 처음에 친구 요청을 보낸 유저이다.
+    // 매개변수 accepter는 친구 요청을 수락한 유저이다.
+    @Transactional
+    public Notification acceptFriendRequest(User receiver, User accepter) {
+        Notification notification = new Notification();
+        notification.setType("friend-accept");
+        notification.setUser(receiver);
+        notification.setContent(accepter.getNickname() + "님이 친구 요청을 수락했습니다.");
+        save(notification);
+        return notification;
+    }
 }
