@@ -4,6 +4,7 @@ import kr.ac.hansung.cse.board_and_chatting.entity.Notification;
 import kr.ac.hansung.cse.board_and_chatting.entity.User;
 import kr.ac.hansung.cse.board_and_chatting.repository.notification_repository.JpaNotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,5 +41,18 @@ public class NotificationService {
         notification.setContent(accepter.getNickname() + "님이 친구 요청을 수락했습니다.");
         save(notification);
         return notification;
+    }
+
+    @Async("databaseTaskExecutor")
+    @Transactional
+    public void markAsReadByIds(List<Long> ids) {
+        notificationRepository.markAsReadByIds(ids);
+    }
+
+    @Async("databaseTaskExecutor")
+    @Transactional
+    public void updateNotificationToRead(Notification notification) {
+        notification.setRead(true);
+        notificationRepository.save(notification);
     }
 }
