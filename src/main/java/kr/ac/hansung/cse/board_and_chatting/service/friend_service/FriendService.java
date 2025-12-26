@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -36,16 +37,9 @@ public class FriendService {
 
         if (!friendRepository.existsByRequesterAndReceiver(requester, receiver)) throw new GeneralException(ErrorStatus.NO_FRIEND_RECORD);
 
-        // requester, receiver에 대응하는 Friend 객체 얻기
-        Optional<Friend> friendOptional = friendRepository.findByRequesterAndReceiver(requester, receiver);
+        int updateCnt = friendRepository.updateStatusToFriend(FriendStatus.FRIEND, LocalDateTime.now(), receiver, requester, FriendStatus.REQUESTED);
 
-        Friend friend = friendOptional.orElseThrow(() -> new GeneralException(ErrorStatus.NO_FRIEND_RECORD));
-
-        // 상태 갱신
-        friend.setStatus(FriendStatus.FRIEND);
-
-        // UPDATE 쿼리
-        friendRepository.save(friend);
+        if (updateCnt == 0) throw new GeneralException(ErrorStatus.NO_FRIEND_RECORD);
 
         return requester;
     }
@@ -53,5 +47,15 @@ public class FriendService {
     @Transactional
     public void deleteByRequesterAndReceiver(User requester, User receiver) {
         friendRepository.deleteByRequesterAndReceiverAndStatus(requester, receiver, FriendStatus.REQUESTED);
+    }
+
+    // Receiver가 거절했을 때, Friend 테이블 해당 row 삭제 -> Requester User 객체 반환
+    @Transactional
+    public User deleteByRequesterAndUserAndReturnRequester(User receiver, String requesterNickname) {
+        Optional<User> userOptional = userRepository.findByNickname(requesterNickname);
+        User requester = userOptional.orElseThrow(() -> new GeneralException(ErrorStatus.NOT_EXISTING_USER));
+
+        friendRepository.deleteByRequesterAndReceiverAndStatus(requester, receiver, FriendStatus.REQUESTED);
+        return requester;
     }
 }

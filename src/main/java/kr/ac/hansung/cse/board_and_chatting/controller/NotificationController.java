@@ -56,6 +56,7 @@ public class NotificationController {
 
         unReadNotifications.forEach(notification -> {
             sseNotificationSender.send(userId, Map.of(
+                    "id", notification.getId(),
                     "type", notification.getType(),
                     "content", notification.getContent(),
                     "isRead", notification.isRead()
@@ -82,7 +83,13 @@ public class NotificationController {
 
         if (sessionService.getSession(request) == null) throw new AuthenticationException(ErrorStatus.NO_AUTHENTICATION);
 
-        if (bindingResult.hasErrors()) throw new GeneralException(ErrorStatus.INTERNAL_BAD_REQUEST);
+        if (bindingResult.hasErrors()){
+            // 콘솔에 어떤 에러가 발생했는지 상세히 출력
+            bindingResult.getAllErrors().forEach(error -> {
+                System.out.println("Validation Error: " + error.getDefaultMessage());
+            });
+            throw new GeneralException(ErrorStatus.INTERNAL_BAD_REQUEST);
+        }
 
         User receiver = (User) sessionService.getSession(request).getAttribute("user");
 
@@ -99,6 +106,7 @@ public class NotificationController {
         // 그렇지 않으면 무시(어차피, SSE 연결 수립 시, 알림을 받기 때문)
         if (sseNotificationSender.isEmitterLogin(requester.getId())) {
             sseNotificationSender.send(requester.getId(), Map.of(
+                    "id", notification.getId(),
                     "type", notification.getType(),
                     "content", notification.getContent(),
                     "isRead", notification.isRead()
@@ -114,5 +122,43 @@ public class NotificationController {
         friendService.deleteByRequesterAndReceiver(requester, receiver);
 
         return ResponseEntity.ok("친구 수락 요청 성공");
+    }
+
+    @PostMapping("/reject_friend_request")
+    public ResponseEntity<?> rejectFriendRequest(@Valid @RequestBody NotificationRequestDto.RejectFriendRequestDto rejectFriendRequestDto,
+                                                 BindingResult bindingResult,
+                                                 HttpServletRequest request) {
+
+        if (sessionService.getSession(request) == null) throw new AuthenticationException(ErrorStatus.NO_AUTHENTICATION);
+
+        if (bindingResult.hasErrors()) throw new GeneralException(ErrorStatus.INTERNAL_BAD_REQUEST);
+
+        User receiver = (User) sessionService.getSession(request).getAttribute("user");
+
+        String requesterNickname = rejectFriendRequestDto.getRequesterNickname();
+
+        // Friend 테이블에 해당 요청 row 삭제 후, Requester User 객체 받기
+        User requester = friendService.deleteByRequesterAndUserAndReturnRequester(receiver, requesterNickname);
+
+        // Notification 테이블에 친구 거절 알림 저장
+        Notification notification = notificationService.rejectFriendRequest(requester, receiver);
+
+        // 친구 요청 수락 알림받을 Emitter가 연결되어 있으면 전송(isRead = true로 UPDATE),
+        // 그렇지 않으면 무시(어차피, SSE 연결 수립 시, 알림을 받기 때문)
+        if (sseNotificationSender.isEmitterLogin(requester.getId())) {
+            sseNotificationSender.send(requester.getId(), Map.of(
+                    "id", notification.getId(),
+                    "type", notification.getType(),
+                    "content", notification.getContent(),
+                    "isRead", notification.isRead()
+            ));
+
+            // isRead = true -> UPDATE 비동기로 처리
+            if (!notification.isRead()) {
+                notificationService.updateNotificationToRead(notification);
+            }
+        }
+
+        return ResponseEntity.ok("친구 거절 성공");
     }
 }
