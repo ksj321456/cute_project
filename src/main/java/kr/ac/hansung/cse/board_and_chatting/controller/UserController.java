@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import kr.ac.hansung.cse.board_and_chatting.controller.specification.UserSpecification;
 import kr.ac.hansung.cse.board_and_chatting.dto.request_dto.UserRequestDto;
 import kr.ac.hansung.cse.board_and_chatting.dto.request_dto.UserRequestDto;
+import kr.ac.hansung.cse.board_and_chatting.dto.request_parameter_dto.RequestParameterDtoImpl;
 import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.EmptyResponse;
 import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.UserResponse;
 import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.UserResponseDto;
@@ -179,6 +180,28 @@ public class UserController implements UserSpecification {
                         .status(SuccessStatus.FRIEND_REQUEST_SUCCESS.getStatus())
                         .code(SuccessStatus.FRIEND_REQUEST_SUCCESS.getCode())
                         .message(SuccessStatus.FRIEND_REQUEST_SUCCESS.getMessage())
+                        .build()
+        );
+    }
+
+    @Override
+    public ResponseEntity<APIResponse<UserResponseDto.ViewMyProfileResponseDto>> viewMyProfile(RequestParameterDtoImpl.ViewMyProfileParameterDto viewMyProfileParameterDto,
+                                                                                               HttpServletRequest request) {
+
+        if (sessionService.getSession(request) == null) throw new AuthenticationException(ErrorStatus.NO_AUTHENTICATION);
+
+        User user = (User) sessionService.getSession(request).getAttribute("user");
+
+        // 자신의 프로필 조회 시 필요한 데이터들 조회하기, 비동기로 실행
+        // ViewMyProfileParameterDto를 매개변수로 전달해, 페이징 쿼리 실행
+        UserResponseDto.ViewMyProfileResponseDto viewMyProfileResponseDto = userService.getMyProfile(user, viewMyProfileParameterDto);
+
+        return APIResponse.toResponseEntity(
+                APIResponse.<UserResponseDto.ViewMyProfileResponseDto>builder()
+                        .status(SuccessStatus.VIEW_MY_PROFILE_SUCCESS.getStatus())
+                        .code(SuccessStatus.VIEW_MY_PROFILE_SUCCESS.getCode())
+                        .message(SuccessStatus.VIEW_MY_PROFILE_SUCCESS.getMessage())
+                        .result(viewMyProfileResponseDto)
                         .build()
         );
     }

@@ -18,7 +18,8 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
     // 컨트롤러 메소드에서 요구하는 파라미터 타입이 RequestHeaderDto.PagingHeader일 경우에만 해당 Resolver 실행
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.getParameterType().equals(RequestParameterDto.class);
+        // 파라미터 타입이 RequestParameterDto 인터페이스를 상속/구현했는지 체크
+        return RequestParameterDto.class.isAssignableFrom(parameter.getParameterType());
     }
 
     @Override

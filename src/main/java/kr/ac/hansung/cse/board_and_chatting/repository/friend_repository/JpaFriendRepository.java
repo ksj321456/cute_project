@@ -3,6 +3,8 @@ package kr.ac.hansung.cse.board_and_chatting.repository.friend_repository;
 import kr.ac.hansung.cse.board_and_chatting.entity.Friend;
 import kr.ac.hansung.cse.board_and_chatting.entity.User;
 import kr.ac.hansung.cse.board_and_chatting.entity.enums.FriendStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -27,4 +29,7 @@ public interface JpaFriendRepository extends JpaRepository<Friend, Long> {
             @Param("requester") User requester,
             @Param("currentStatus") FriendStatus currentStatus
             );
+
+    @Query("SELECT f FROM Friend f WHERE f.requester.id = :userId OR f.receiver.id = :userId AND f.status = :friendStatus ORDER BY f.createdAt DESC")
+    Page<Friend> findByRequesterIdAndFriendStatus(@Param("userId") Long userId, @Param("friendStatus") FriendStatus friendStatus, Pageable pageable);
 }

@@ -20,4 +20,23 @@ public class RequestParameterDtoImpl {
         @Min(value = 1, message = "size 파라미터의 값은 1 이상이어야 합니다.")
         private Integer size;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    @NoArgsConstructor
+    @Setter
+    public static class ViewMyProfileParameterDto implements RequestParameterDto {
+        private Integer postPage;
+
+        private Integer postSize;
+
+        private Integer commentPage;
+
+        private Integer commentSize;
+
+        private Integer friendPage;
+
+        private Integer friendSize;
+    }
 }

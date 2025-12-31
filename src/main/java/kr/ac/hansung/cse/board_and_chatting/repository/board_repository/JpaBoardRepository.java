@@ -65,4 +65,8 @@ JOIN b.user u
             "JOIN FETCH b.user u " +
             "WHERE b.id = :boardId")
     Optional<Board> findBoardByIdCustom(@Param("boardId") Long boardId);
+
+    @Query(value = "SELECT b FROM Board b WHERE b.user.id = :userId ORDER BY b.createdAt DESC",
+            countQuery = "SELECT COUNT(b) FROM Board b WHERE b.user.id = :userId")
+    Page<Board> findAllByUserIdCustom(@Param("userId") Long userId, Pageable pageable);
 }

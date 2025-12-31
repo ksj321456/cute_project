@@ -33,4 +33,9 @@ public class UserJpaRepository implements UserRepository {
     public Optional<User> findByNickname(String nickname) {
         return userRepository.findByNickname(nickname);
     }
+
+    @Override
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
 }

@@ -21,6 +21,9 @@ public enum SuccessStatus {
     // 친구 요청 성공 메시지
     FRIEND_REQUEST_SUCCESS(HttpStatus.OK, "FRIEND_REQUEST_SUCCESS", "친구 요청에 성공했습니다."),
 
+    // 자기 프로필 조회 성공 메시지
+    VIEW_MY_PROFILE_SUCCESS(HttpStatus.OK, "VIEW_MY_PROFILE_SUCCESS", "자기 프로필 조회에 성공했습니다."),
+
     // 홈페이지 요청 시 세션 검사 성공
     SESSION_TEST_SUCCESS(HttpStatus.OK, "SESSION_TEST_SUCCESS", "세션이 존재합니다."),
 

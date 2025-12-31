@@ -67,4 +67,9 @@ public class BoardJpaRepository implements BoardRepository {
         log.info("Repository Layer: findBoardByIdCustom is exist => " + boardOptional.isPresent());
         return boardOptional.orElseThrow(() -> new ServerInternalException(ErrorStatus.INTERNAL_BAD_REQUEST));
     }
+
+    @Override
+    public Page<Board> findAllByUserIdCustom(Long userId, Pageable pageable) {
+        return boardRepository.findAllByUserIdCustom(userId, pageable);
+    }
 }
