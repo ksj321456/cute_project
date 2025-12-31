@@ -4,6 +4,7 @@ import kr.ac.hansung.cse.board_and_chatting.dto.jpa_dto.comment_dto.CommentCount
 import kr.ac.hansung.cse.board_and_chatting.dto.jpa_dto.comment_dto.CommentDto;
 import kr.ac.hansung.cse.board_and_chatting.dto.jpa_dto.comment_dto.CommentsInOneArticle;
 import kr.ac.hansung.cse.board_and_chatting.entity.Comment;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -28,4 +29,8 @@ public interface JpaCommentRepository extends JpaRepository<Comment, Long> {
             "ORDER BY c.createdAt DESC",
             countQuery = "SELECT COUNT(*) FROM Comment c WHERE c.board.id = :boardId")
     List<CommentDto> findCommentByBoardIdCustom(@Param("boardId") Long boardId, Pageable pageable);
+
+    @Query(value = "SELECT c FROM Comment c WHERE c.user.id = :userId ORDER BY c.createdAt DESC",
+    countQuery = "SELECT COUNT(c) FROM Comment c WHERE c.user.id = :userId")
+    Page<Comment> findCommentByUserIdCustom(@Param("userId") Long userId, Pageable pageable);
 }

@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import kr.ac.hansung.cse.board_and_chatting.dto.request_dto.UserRequestDto;
+import kr.ac.hansung.cse.board_and_chatting.dto.request_parameter_dto.RequestParameterDtoImpl;
 import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.EmptyResponse;
 import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.UserResponseDto;
 import kr.ac.hansung.cse.board_and_chatting.exception.APIResponse;
@@ -76,4 +77,10 @@ public interface UserSpecification {
     @PostMapping("/request_friend")
     @Operation(summary = "친구 요청", description = "친구 요청 보내기 -> 이벤트로 던져줘서 이벤트 리스너(구독자)가 가로채서 대신 수행하는 형식")
     ResponseEntity<APIResponse<EmptyResponse>> requestFriend(UserRequestDto.FriendRequestDto friendRequestDto, BindingResult bindingResult, HttpServletRequest request);
+
+    @GetMapping("/view_my_profile")
+    @Operation(summary = "자기 프로필 보기", description = "자기 프로필 내용에는 User Entity, 자신이 쓴 글, 댓글 그리고 친구 목록을 보여줍니다.")
+    public ResponseEntity<APIResponse<UserResponseDto.ViewMyProfileResponseDto>> viewMyProfile(RequestParameterDtoImpl.ViewMyProfileParameterDto viewMyProfileParameterDto,
+                                                                                               HttpServletRequest request);
+
 }

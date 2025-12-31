@@ -17,4 +17,6 @@ public interface BoardRepository {
     Page<BoardDto> findAllByTitleAndContentCustom(String title, String content, Pageable pageable);
 
     Board findBoardByIdCustom(Long boardId);
+
+    Page<Board> findAllByUserIdCustom(Long userId, Pageable pageable);
 }

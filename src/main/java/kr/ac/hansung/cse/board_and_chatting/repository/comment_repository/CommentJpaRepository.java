@@ -6,6 +6,7 @@ import kr.ac.hansung.cse.board_and_chatting.dto.jpa_dto.comment_dto.CommentsInOn
 import kr.ac.hansung.cse.board_and_chatting.entity.Comment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
@@ -31,5 +32,10 @@ public class CommentJpaRepository implements CommentRepository {
     @Override
     public List<CommentDto> findCommentByBoardIdCustom(Long boardId, Pageable pageable) {
         return jpaCommentRepository.findCommentByBoardIdCustom(boardId, pageable);
+    }
+
+    @Override
+    public Page<Comment> findCommentByUserIdCustom(Long userId, Pageable pageable) {
+        return jpaCommentRepository.findCommentByUserIdCustom(userId, pageable);
     }
 }

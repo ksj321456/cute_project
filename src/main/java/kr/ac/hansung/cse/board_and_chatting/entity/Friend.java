@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class Friend implements BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "friend_id")
     private Long id;
 

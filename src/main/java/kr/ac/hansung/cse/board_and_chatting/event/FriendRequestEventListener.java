@@ -32,6 +32,7 @@ public class FriendRequestEventListener {
         notificationRepository.save(notification);
 
         sseNotificationSender.send(notification.getUser().getId(), Map.of(
+                "id", notification.getId(),
                 "type", "friend-request",
                 "content", notification.getContent(),
                 "isRead", notification.isRead()

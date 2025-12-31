@@ -1,6 +1,8 @@
 package kr.ac.hansung.cse.board_and_chatting.service.user_service;
 
 import kr.ac.hansung.cse.board_and_chatting.dto.request_dto.UserRequestDto;
+import kr.ac.hansung.cse.board_and_chatting.dto.request_parameter_dto.RequestParameterDtoImpl;
+import kr.ac.hansung.cse.board_and_chatting.dto.response_dto.UserResponseDto;
 import kr.ac.hansung.cse.board_and_chatting.entity.User;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,4 +15,6 @@ public interface UserService {
     public User loginService(UserRequestDto.LoginDto userDto);
 
     void friendRequest(String from, String to);
+
+    UserResponseDto.ViewMyProfileResponseDto getMyProfile(User user, RequestParameterDtoImpl.ViewMyProfileParameterDto viewMyProfileParameterDto);
 }

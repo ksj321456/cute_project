@@ -17,7 +17,9 @@ public interface JpaNotificationRepository extends JpaRepository<Notification, L
     @Query("SELECT n FROM Notification n JOIN FETCH n.user WHERE n.user = :user")
     List<Notification> findByUser(@Param("user") User user);
 
-    @Modifying
+
+    // 쿼리 전송 후, 영속성 컨텍스트 clear(DB와 불일치 문제 때문에)
+    @Modifying(clearAutomatically = true)
     @Query("UPDATE Notification n SET n.isRead = true WHERE n.id IN :ids")
     void markAsReadByIds(@Param("ids") List<Long> ids);
 }

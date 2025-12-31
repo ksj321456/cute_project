@@ -43,6 +43,16 @@ public class NotificationService {
         return notification;
     }
 
+    @Transactional
+    public Notification rejectFriendRequest(User receiver, User accepter) {
+        Notification notification = new Notification();
+        notification.setType("friend-reject");
+        notification.setUser(receiver);
+        notification.setContent(accepter.getNickname() + "님이 친구 요청을 거절했습니다.");
+        save(notification);
+        return notification;
+    }
+
     @Async("databaseTaskExecutor")
     @Transactional
     public void markAsReadByIds(List<Long> ids) {

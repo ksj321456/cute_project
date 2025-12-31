@@ -23,7 +23,7 @@ public class AsyncConfig {
     }
 
     @Bean(name = "databaseTaskExecutor")
-    public Executor databaseTastExecutor() {
+    public Executor databaseTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(5);
         executor.setMaxPoolSize(10);
